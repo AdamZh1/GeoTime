@@ -11,7 +11,7 @@ let router = express.Router();
 const myDatabase = require('./myDatabase');
 let db = new myDatabase();
 
-const Data = require('./Data');
+const Score = require('./models/Data');
 
 router.get("/single",function(req,res){
     res.sendFile(path.resolve(__dirname + "/public/views/index.html"));  //changed
@@ -19,6 +19,7 @@ router.get("/single",function(req,res){
 router.get("/", function(req, res){
     res.sendFile(path.resolve(__dirname + "/public/views/homepage.html"));
 });
+
 
 
 var infoList = [{"lat":51.51055261808582,"lng":-0.13532114247134447,"tme":1975,"file":"image1.webp"},
@@ -53,6 +54,7 @@ var infoList = [{"lat":51.51055261808582,"lng":-0.13532114247134447,"tme":1975,"
 {"lat":47.05266261481203,"lng":8.308861053907577,"tme":1980,"file":"image30.webp"},
 {"lat":48.84491533536642,"lng":2.3736864054858544,"tme":2006,"file":"image31.webp"},];
 
+/* Old leaderboard - Unused
 var leaderBoard = [{"name":"Unclaimed","score":0},
 {"name":"Unclaimed","score":0},
 {"name":"Unclaimed","score":0},
@@ -78,6 +80,8 @@ router.post('/initializeserver2', function(req, res){
     }
     res.json(null);
 });
+
+*/
 router.get('/generaterounds', function(req, res){
     let returnarray = [-1,-1,-1,-1,-1]
     for(i = 0; i < returnarray.length; i++){
@@ -90,14 +94,17 @@ router.get('/generaterounds', function(req, res){
     res.json({"indexarray":returnarray});
 });
 router.get('/calcpoints', function(req, res){
-    let pointsD = Math.floor(5000*((0.9996)**req.query.distanceoff));
-    let pointsT = Math.floor(5000-250*req.query.timeoff);
+    const distanceoff = Number(req.query.distanceoff ?? 0);
+    const timeoff = Number(req.query.timeoff ?? 0);
+    let pointsD = Math.floor(5000*((0.9996)**distanceoff));
+    let pointsT = Math.floor(5000-250*timeoff);
     if (pointsT < 0)
       pointsT = 0;
     res.json({"pointsD":pointsD, "pointsT":pointsT});
 });
+
 router.get('/getinfo', function(req, res){
-    index = Number(req.query.index);
+    const index = Number(req.query.index);
     reallat = infoList[index].lat;
     reallng = infoList[index].lng;
     realtime = infoList[index].tme;
@@ -105,31 +112,35 @@ router.get('/getinfo', function(req, res){
     res.json({"lat":reallat, "lng":reallng, "tme":realtime, "file":filename});
 });
 
-router.post('/uploadscore', function(req, res){
-    let hasReplaced = false;
-    let tempval = 0;
-    for(i = 0; i < leaderBoard.length; i++){
-        if(Number(req.body.score) >= leaderBoard[i].score && !hasReplaced){
-            tempval = leaderBoard[i];
-            leaderBoard[i] = {"name":req.body.name,"score":Number(req.body.score)};
-            let obj = new Data(i,req.body.name,Number(req.body.score));
-            db.putData(obj);
-            hasReplaced = true;
-        }
-        else if(hasReplaced){
-            let tempval2 = leaderBoard[i];
-            leaderBoard[i] = tempval;
-            let obj = new Data(i,tempval.name,tempval.score);
-            db.putData(obj);
-            tempval = tempval2;
-        }
-    }
-    res.json(null);
-});
+const Score = require('./models/Score'); // <-- import the model
 
-router.get('/getleaderboard', function(req, res){
-    res.json({"leaderboard":leaderBoard});
-});
+router.post("/uploadscore", async (req, res) => {
+    try {
+      const name = String(req.body.name ?? "Anonymous").slice(0, 30);
+      const score = Number(req.body.score ?? 0);
+      if (!Number.isFinite(score) || score < 0) {
+        return res.status(400).json({ ok: false, error: "invalid score" });
+      }
+      await Score.create({ name, score });
+      res.json({ ok: true });
+    } catch (err) {
+      console.error("uploadscore error:", err);
+      res.status(500).json({ ok: false, error: "failed to save score" });
+    }
+  });
+
+  router.get("/getleaderboard", async (req, res) => {
+    try {
+      const top = await Score.find({})
+        .sort({ score: -1, createdAt: 1 }) // highest first; older wins ties
+        .limit(10)
+        .lean();
+      res.json({ leaderboard: top });
+    } catch (err) {
+      console.error("getleaderboard error:", err);
+      res.status(500).json({ error: "failed to fetch leaderboard" });
+    }
+  });
 
 
 module.exports = router;
