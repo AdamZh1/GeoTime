@@ -112,8 +112,6 @@ router.get('/getinfo', function(req, res){
     res.json({"lat":reallat, "lng":reallng, "tme":realtime, "file":filename});
 });
 
-const Score = require('./models/Score'); // <-- import the model
-
 router.post("/uploadscore", async (req, res) => {
     try {
       const name = String(req.body.name ?? "Anonymous").slice(0, 30);
