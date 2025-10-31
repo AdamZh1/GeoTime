@@ -1,0 +1,20 @@
+{
+  "name": "GeoTime",
+  "version": "1.0.0",
+  "description": "Team 7 GeoTime Web Application",
+  "main": "indext7.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "optimize": "node scripts/convert-images.cjs"
+  },
+  "author": "Francisco Garcia, Adam Zhou, Raylan Madrigal",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2",
+    "mongoose": "^8.19.2",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "sharp": "^0.34.4"
+  }
+}

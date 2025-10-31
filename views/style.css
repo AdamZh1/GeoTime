@@ -1,0 +1,302 @@
+/* ---------- Base / reset ---------- */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: "Roboto", system-ui, sans-serif;
+  background: linear-gradient(180deg, #db302a 0%, #62186b 100%) no-repeat fixed;
+  color: #fff;
+}
+
+/* ---------- HOMEPAGE LAYOUT ---------- */
+
+/* center the main content vertically */
+.itemcontainer {
+  min-height: calc(100vh - 2rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1rem;
+}
+
+/* logo sizing */
+#logocontainer { display: flex; justify-content: center; }
+#logo {
+  width: clamp(120px, 20vw, 220px);
+  height: auto;
+  display: block;
+  border-radius: 50%;
+  background: rgba(0,0,0,.15);
+  padding: .5rem;
+}
+
+/* play button inherits .btn styles; tweak size for homepage */
+.playbuttons.btn {
+  font-size: 1rem;
+  padding: 0.75rem 1.25rem;
+}
+
+/* leaderboard – make it tidy and responsive */
+#leaderboard {
+  max-width: 720px;
+  margin: 1rem auto 0;
+  padding: 1rem 1.25rem;
+  background: rgba(0,0,0,.15);
+  border-radius: 12px;
+  backdrop-filter: blur(2px);
+}
+#leaderboard h2 {
+  margin: 0 0 .5rem;
+  font-weight: 700;
+  text-align: center;
+}
+#leaderboard ol {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+#leaderboard li {
+  margin: .25rem 0;
+}
+
+/* on wider screens, place leaderboard on the right, content centered left */
+@media (min-width: 900px) {
+  body > .home-grid {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 1.25rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+}
+
+/* ---------- Layout containers ---------- */
+.entiregame { padding: 1rem; max-width: 1200px; margin: 0 auto; }
+.hud { display: flex; justify-content: flex-end; }
+
+#totalpoints {
+  font-family: "Permanent Marker", cursive;
+  font-size: clamp(1rem, 3vw, 1.75rem);
+  margin: 0.5rem 0 1rem;
+  animation: bounce 1s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0% { transform: translateY(0); }
+  20% { transform: translateY(-8px); }
+  40%, 100% { transform: translateY(0); }
+}
+
+/* Mobile-first: single column; gap between sections */
+.gamegrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+/* >= 900px: two columns (image | map), then actions + slider full width */
+@media (min-width: 900px) {
+  .gamegrid {
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: max-content;
+    align-items: start;
+  }
+  .actions, .container, #roundinfo { grid-column: 1 / -1; }
+}
+
+/* ---------- Media elements ---------- */
+.photo img {
+  width: 100%;
+  height: auto;
+  max-height: 60vh;
+  object-fit: contain;
+  display: block;
+  border-radius: 8px;
+}
+
+/* Let the map flex to the width; height scales with viewport */
+.map-wrap { width: 100%; }
+#map {
+  width: 100%;
+  height: min(60vh, 700px);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display:inline-block;
+  min-height:44px;
+  padding:0.5em 1em;
+  font-weight:680;
+  font-size:12px;
+  font-family:"Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  border:none;
+  border-radius:1em;
+  cursor:pointer;
+  background:green;
+  color:#fff;
+}
+.btn:hover { background: rgb(5,145,5); box-shadow: 0 12px 16px rgba(0,0,0,.24), 0 17px 50px rgba(0,0,0,.19); }
+.btn:active { transform: translateY(2px); }
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* ---------- Round info ---------- */
+#roundinfo {
+  font-family: "Nunito", sans-serif;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  text-shadow: 0 0 10px lightblue, 0 0 20px lightblue, 0 0 40px lightblue;
+  margin: 0.25rem 0 0.5rem;
+}
+
+/* ---------- Range slider ---------- */
+.container { display: flex; flex-direction: column; align-items: stretch; gap: 0.5rem; }
+.box-minmax {
+  display: flex; justify-content: space-between; width: 100%;
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+}
+
+:root { --thumb-w: 22px; }
+
+/* position the label above the slider, center via transform */
+.range-slider { position: relative; padding-top: 2.25rem; }
+@supports (-webkit-appearance:none) {
+  .rs-label {
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;                    /* JS sets left as percentage */
+    transform: translate(calc(-59% + 4px), -45%);
+    width: 3rem; height: 3rem;
+    display: grid; place-items: center;
+    border: 2px solid #fff; border-radius: 999px;
+    background: transparent;
+    font-size: 1.1rem;
+  }
+}
+
+@supports (-moz-appearance:none) {
+  .rs-label {
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 0;                    /* JS sets left as percentage */
+    transform: translate(calc(-59% + 4px), -45%);
+    width: 3rem; height: 3rem;
+    display: grid; place-items: center;
+    border: 2px solid #fff; border-radius: 999px;
+    background: transparent;
+    font-size: 1.1rem;
+  }
+}
+
+/* make slider fluid */
+.rs-range {
+  width: 100%;
+  margin: 0;
+  appearance: none;
+  background: transparent;
+}
+.rs-range:focus { outline: none; }
+.rs-range::-webkit-slider-runnable-track { height: 3px; background: #fff; }
+.rs-range::-moz-range-track { height: 3px; background: #fff; }
+.rs-range::-webkit-slider-thumb {
+  appearance: none; width: 22px; height: 42px; border-radius: 22px;
+  background: #fff; margin-top: -20px; box-shadow: 0 10px 10px rgba(0,0,0,.25);
+}
+.rs-range::-moz-range-thumb {
+  width: 22px; height: 42px; border-radius: 22px;
+  background: #fff; box-shadow: 0 10px 10px rgba(0,0,0,.25);
+}
+
+/* ---------- Game over screen ---------- */
+.gameover {
+  min-height: 100vh;
+  display: none;                 /* hidden by JS initially */
+  padding: 2rem;
+  display: flex;                 /* shown via JS -> .show() sets inline display */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+}
+/* Animated outline title */
+#gameovertitle {
+  position: relative;
+  display: inline-block;
+  font-family: "Jersey 10 Charted", sans-serif;
+  font-size: clamp(3rem, 12vw, 8rem);
+  color: transparent;                 /* show only outline on the base text */
+  -webkit-text-stroke: 0.3vw #62186b; /* outline */
+  white-space: nowrap;
+  overflow: hidden;                   /* clip the filling layer */
+}
+
+/* The filling layer that sweeps across */
+#gameovertitle::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;                           /* fill same box as the title */
+  color: blueviolet;                  /* the fill color */
+  -webkit-text-stroke: 0;             /* no outline on the fill */
+  white-space: nowrap;
+  width: 0;                           /* <<< START EMPTY so it doesn't pre-fill */
+  overflow: hidden;                   /* clip the text to current width */
+  border-right: 2px solid purple;     /* the “scanner” line */
+  will-change: width;
+  animation: gameover-reveal 4s linear infinite;
+}
+
+@keyframes gameover-reveal {
+  /* grow from 0 → 100%, then snap back to 0 to repeat */
+  0%   { width: 0; }
+  70%  { width: 100%; }  /* finish filling around 70% of the cycle */
+  71%  { width: 0; }     /* instant reset so it restarts cleanly */
+  100% { width: 0; }
+}
+
+.zoom-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.9);
+  display: grid;             /* centers reliably, even while transformed */
+  place-items: center;
+  overscroll-behavior: contain;
+}
+
+.zoom-viewport {
+  position: relative;
+  width: 92vw;
+  height: 92vh;
+  max-width: 1400px;
+  overflow: hidden;          /* hide panned edges */
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.45);
+  touch-action: none;        /* required for pinch zoom */
+  background: transparent;
+}
+
+.zoom-image {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  transform-origin: center center;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: auto;
+}
+
+.zoom-image:active { cursor: grabbing; }
