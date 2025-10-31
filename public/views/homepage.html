@@ -29,51 +29,31 @@
         location.href = "./single";
         return false;
       }
-      function polling() {
+      function renderLeaderboard(data) {
+        const $list = $("#list").empty();
+        if (!data || !Array.isArray(data.leaderboard)) return;
+
+        for (let i = 0; i < data.leaderboard.length; i++) {
+          const row = data.leaderboard[i];
+          const name = row.name ?? "Anonymous";
+          const score = Number(row.score ?? 0);
+          const html = `<li><span>${name}: ${score}</span></li>`;
+          $list.append(html);
+        }
+      }
+
+      function pollLeaderboard() {
         $.ajax({
           url: "/getleaderboard",
           type: "GET",
-          data: null,
-          success: function (data) {
-            $("#list").empty();
-            for (i = 0; i < data.leaderboard.length; i++) {
-              console.log("hi");
-              html =
-                "<li><span>" +
-                data.leaderboard[i].name +
-                ": " +
-                data.leaderboard[i].score +
-                "</span></li>";
-              $("#list").append(html);
-            }
-          },
-          dataType: "json",
-        });
-        let numMilliSeconds = 1000; // 1000 milliseconds = 1 second
-        setTimeout(polling, numMilliSeconds);
+          dataType: "json"
+        })
+        .done(renderLeaderboard)
+        .always(() => setTimeout(pollLeaderboard, 5000)); // poll every 5s
       }
       $(document).ready(function () {
-        $.ajax({
-          url: "/initializeserver",
-          type: "GET",
-          data: null,
-          success: function (data) {
-            if(data.istrue){
-              $.ajax({
-                url: "/initializeserver2",
-                type: "POST",
-                data:{list:data.list},
-                success: function(data){
-                  return;
-                } ,
-                dataType: "json"
-              }); 
-            }
-          },
-          dataType: "json",
-        });
-        polling();
-        $("#single").click(requestClicked);
+        $("#single").on("click", requestClicked);
+        pollLeaderboard();
       });
     </script>
   </body>

@@ -1,21 +1,16 @@
-var mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
-var Data = mongoose.model("Leaderboard",{
-    ident: {
-        required: true,
-        unique: true,
-        type:Number
-    },
-    name: String,
-    score: Number
-});
+const scoreSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true, trim: true, maxlength: 30 },
+    score: { type: Number, required: true, min: 0 },
+  },
+  { timestamps: true }
+);
 
-//var Data = mongoose.model("Info",{
-//    ident: Number,
-//    name: String
-//});
+// Helpful index for sorting
+scoreSchema.index({ score: -1, createdAt: 1 });
 
-
-module.exports = Data;
-
- 
+// Use existing compiled model if it exists (prevents duplicate schema issues)
+module.exports =
+  mongoose.models.Leaderboard || mongoose.model("Leaderboard", scoreSchema);
