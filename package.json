@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "optimize": "node scripts/convert-images.cjs",
-    "start": "node index.js"
+    "start": "node indext7.js"
   },
   "author": "Francisco Garcia, Adam Zhou, Raylan Madrigal",
   "license": "ISC",
