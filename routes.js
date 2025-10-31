@@ -8,8 +8,6 @@ let router = express.Router();
 //request is info sending to server from client.
 //response is info sending to client from server.
 
-const myDatabase = require('./myDatabase');
-let db = new myDatabase();
 
 const Score = require('./models/Data');
 
