@@ -88,6 +88,12 @@ lerna-debug.log
 .DS_Store
 Thumbs.db
 
+#node modules
 node_modules/
 *.bak
 
+#images
+node_modules/
+public/images/*.png
+public/images/*.jpg
+public/images/*.jpeg
