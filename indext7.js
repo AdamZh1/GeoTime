@@ -4,7 +4,7 @@ var bodyParser = require('body-parser');
 //change code 
 const mongoose = require("mongoose");
 
-mongoose.connect("mongodb://localhost:27017/GeoTime", {
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/GeoTime", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
