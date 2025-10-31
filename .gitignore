@@ -92,6 +92,10 @@ Thumbs.db
 node_modules/
 *.bak
 
+node_modules
+.env
+.DS_Store
+
 #images
 node_modules/
 public/images/*.png
